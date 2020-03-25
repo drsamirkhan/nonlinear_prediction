@@ -1,6 +1,13 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This part of the code was used to generate the result of examples 1 and 2. It generates the phase space, and make predictions
+% Please consider citing the paper if you find this code useful:
+% "Khan and Takehisa (2020). Diagnosing intermittent faults through non-linear analysis. IFAC2020"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %data1=xd;
-data1=tr2(1000:end,1); % input n-d data
+
+data1=tr2(1000:end,1); % input 1-d data
 [n_1,m_1]=size(data1); %m_1 is no of columns, n_1 no of rows
+
 %% n-d phase space conversion
 
 N = length(data1); tau =5; m1=3; % choose appropriate tau and embedding dimension using autocorrelation and FNN
@@ -19,12 +26,13 @@ for t_i=1:m_1
     temp(:,m1*t_i-(m1-1):m1*t_i)=xe(:,:);
 end
 
-data1=temp;
+data1=temp; % store of future use
 
 %% prediction
-m=0;n=0;intial_value=0;
 
-plot(data1(:,1))
+m=0;n=0;intial_value=0; 
+
+% plot(data1(:,1)) 
 
 m=length(data1); 
 n=m1;
@@ -51,21 +59,21 @@ for i2=1:m_1 %(global)
                 cIdx(1,j)=cIdx(1,j-1); % use the j-1 value
             end
         %avg(i,:)=avg(i,:)+X3(cIdx(1,j)+1,:);      
-        temp=temp+data1(cIdx(1,j)+1,i3:i3+m1-1); % keep adding the nearest neighbour responses   
+        temp=temp+data1(cIdx(1,j)+1,i3:i3+m1-1); % keep adding the nearest neighbour data points   
 
         end
 
-    avg(i,i3:i3+m1-1)=temp/(k_nn-1); % take the average
-    intial_value(1,1:dim)=avg(i,i3:i3+m1-1); 
+    avg(i,i3:i3+m1-1)=temp/(k_nn-1); % take the average of the nearest neighbour data points   
+    intial_value(1,1:dim)=avg(i,i3:i3+m1-1); % intialise next value
     %data1(i+m,1:dim)=intial_value(1,1:dim);
-    temp=0;
+    temp=0; % rest variable 
     end
 
-    i3=i3+m1;
+    i3=i3+m1; % increment global assignment
 end
 
-
+%%%%%%%%%%%%%%%%%%%%%
+%% plot results
 hold on
-plot(m-t_past+1:m-t_past+steps,avg(:,1))
+plot(m-t_past+1:m-t_past+steps,avg(:,1)) 
 line([m-t_past+1 m-t_past+1], [-1.5 1.5]);
-%}
